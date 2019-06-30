@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <title>screen example</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body onload = "init();">
+        <div class="container-fluid">
+            <div class="row" style="border-bottom:10px solid black" >
+              <div class="col-md-8" style="border-right:8px solid rgb(63, 26, 26)" >
+                <div style="display: flex; padding-top: 15px;">
+                  <img id = "cameraicon" onclick="snapshot();"
+                  src="./cameraicon.png"
+                  style = "margin-left: auto;
+                          margin-right: auto;
+                          width:50px;
+                          height:50px;"/>
+
+                <img id = "playbutton" onclick = "startWebcam();"
+                  src="./playbutton.png"
+                  style = "margin-left: auto;
+                          margin-right: auto;
+                          width:50px;
+                          height:50px;"/>
+
+                <img id = "stopbutton" onclick = "stopWebcam();"
+                  src="./stopbutton.png"
+                  style = "margin-left:auto;
+                          margin-right:auto;
+                          width:50px;
+                          height:50px;"/>
+                </div>
+                <p><video onclick="snapshot(this);" width=100 height=100 id="video" style ="margin: 100px" controls autoplay></video></p>
+                <p><canvas  id="myCanvas" width="800" height="800"></canvas></p>
+
+                  <script>
+        //--------------------
+        // GET USER MEDIA CODE
+        //--------------------
+            navigator.getUserMedia = ( navigator.getUserMedia ||
+                               navigator.webkitGetUserMedia ||
+                               navigator.mozGetUserMedia ||
+                               navigator.msGetUserMedia);
+
+        var video;
+        var webcamStream;
+
+        function startWebcam() {
+          if (navigator.getUserMedia) {
+             navigator.getUserMedia (
+
+                // constraints
+                {
+                   video: true,
+                   audio: false
+                },
+
+                // successCallback
+                function(localMediaStream) {
+                    video = document.querySelector('video');
+                   video.src = window.URL.createObjectURL(localMediaStream);
+                   webcamStream = localMediaStream;
+                },
+
+                // errorCallback
+                function(err) {
+                   console.log("The following error occured: " + err);
+                }
+             );
+          } else {
+             console.log("getUserMedia not supported");
+          }
+        }
+
+        function stopWebcam() {
+            webcamStream.stop();
+        }
+        //---------------------
+        // TAKE A SNAPSHOT CODE
+        //---------------------
+        var canvas, ctx;
+
+        function init() {
+          // Get the canvas and obtain a context for
+          // drawing in it
+          canvas = document.getElementById("myCanvas");
+          ctx = canvas.getContext('2d');
+        }
+
+        function snapshot() {
+           // Draws current image from the video element into the canvas
+          ctx.drawImage(video, 0,0, canvas.width, canvas.height);
+
+        blob = new Promise((res, rej)=>{
+    canvas.toBlob(res, 'image/jpeg'); // request a Blob from the canvas
+  });
+
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'screenshot.jpg';
+        document.body.appendChild(a);
+        a.click();
+        }
+
+    </script>
+              </div>
+              <div class="col-md-4">
+                <img src="./pink.png"
+                  style= "height:auto;
+                  max-width:100%;
+                  padding: 50px 0;
+                  border:none;
+                  display:block;"
+                  alt="Image Not Available" />
+                <img src="./whiteshirt.png"
+                  style= "height:auto;
+                  max-width:100%;
+                  padding: 30px 0;
+                  border:none;
+                  display:block;"
+                  alt="Image Not Available" />
+                <img src="./blacktshirt.png"
+                  style= "height:auto;
+                  max-width:100%;
+                  padding: 30px 0;
+                  border:none;
+                  display:block;"
+                  alt="Image Not Available" />
+              </div>
+            </div>
+        </div>
+  </body>
+</html>
